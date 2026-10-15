@@ -65,6 +65,13 @@ REGALO
             animation: floatUp linear infinite;
             pointer-events: none;
         }
+        .kitty-particle {
+            position: absolute;
+            opacity: 0.8;
+            animation: floatUp linear infinite;
+            bottom: -60px;
+            filter: drop-shadow(0 2px 4px rgba(244, 63, 94, 0.2));
+        }
 
         @keyframes floatUp {
             0% {
@@ -218,17 +225,7 @@ REGALO
         <i class="fa-solid fa-heart glow-heart"></i>
     </button>
 
-    <!-- GUÍA DE PERSONALIZACIÓN FACIL (MODAL DE AYUDA) -->
-    <div id="guide-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 relative max-h-[85vh] overflow-y-auto shadow-2xl border border-rose-200">
-            <button onclick="toggleGuideModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-            <div class="flex items-center space-x-2 text-rose-500 mb-2">
-                <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
-                <h3 class="font-serif-romantic text-xl font-bold">Guía de Personalización</h3>
-            </div>
+    
             <p class="text-xs text-slate-500 mb-4">Aprende a editar los textos, fotos, fecha y playlist abriendo este archivo en cualquier bloc de notas o editor de código.</p>
 
             <div class="space-y-4 text-xs sm:text-sm text-slate-700">
@@ -262,12 +259,6 @@ REGALO
     <!-- MAIN CONTAINER -->
     <div class="relative z-10 max-w-md mx-auto px-4 sm:max-w-xl md:max-w-2xl lg:max-w-4xl">
 
-        <!-- INSTRUCTION BAR FOR CUSTOMIZER -->
-        <div class="mt-4 bg-white/90 backdrop-blur border border-rose-200 rounded-full p-2 px-4 shadow-sm flex items-center justify-between">
-            <div class="flex items-center space-x-2 text-xs sm:text-sm text-slate-600">
-                <span class="inline-block w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
-                <span>Plantilla Romántica Editable</span>
-            </div>
             <button onclick="toggleGuideModal()" class="bg-rose-100 text-rose-600 hover:bg-rose-200 text-xs font-semibold px-3 py-1.5 rounded-full transition flex items-center space-x-1">
                 <i class="fa-solid fa-circle-question"></i>
                 <span>¿Cómo editar?</span>
@@ -593,27 +584,57 @@ REGALO
         setInterval(updateCounter, 1000);
         updateCounter();
 
-        // --- 2. CORAZONES FLOTANTES DE FONDO ---
-        function createHeartParticle() {
-            const container = document.getElementById('hearts-bg');
-            const heart = document.createElement('i');
-            heart.classList.add('fa-solid', 'fa-heart', 'heart-particle');
-            
-            const size = Math.random() * 18 + 10;
-            heart.style.fontSize = `${size}px`;
-            heart.style.left = `${Math.random() * 100}vw`;
-            
-            const duration = Math.random() * 5 + 6;
-            heart.style.animationDuration = `${duration}s`;
-            
-            container.appendChild(heart);
+        // --- 2. CORAZONES Y HELLO KITTYS FLOTANTES DE FONDO (5 VARIACIONES) ---
+        const kittyImages = [
+            'https://pngimg.com/uploads/hello_kitty/hello_kitty_PNG16.png', // Kitty Vestido
+            'https://pngimg.com/uploads/hello_kitty/hello_kitty_PNG9.png',  // Kitty Sentada
+            'https://pngimg.com/uploads/hello_kitty/hello_kitty_PNG17.png', // Kitty Corazón
+            'https://api.iconify.design/fluent-emoji:ribbon.svg',           // Moño Coquette
+            'https://pngimg.com/uploads/hello_kitty/hello_kitty_PNG20.png'  // Kitty Cara
+        ];
 
-            setTimeout(() => {
-                heart.remove();
-            }, duration * 1000);
+        function createFloatingParticle() {
+            const container = document.getElementById('hearts-bg');
+            const isKitty = Math.random() > 0.35; // 65% probabilidad de variaciones de Kitty/Moño
+
+            if (isKitty) {
+                const kitty = document.createElement('img');
+                kitty.classList.add('kitty-particle');
+                kitty.src = kittyImages[Math.floor(Math.random() * kittyImages.length)];
+                
+                const size = Math.random() * 22 + 24; // Tamaño entre 24px y 46px
+                kitty.style.width = `${size}px`;
+                kitty.style.height = 'auto';
+                kitty.style.left = `${Math.random() * 95}vw`;
+                
+                const duration = Math.random() * 5 + 7;
+                kitty.style.animationDuration = `${duration}s`;
+                
+                container.appendChild(kitty);
+
+                setTimeout(() => {
+                    kitty.remove();
+                }, duration * 1000);
+            } else {
+                const heart = document.createElement('i');
+                heart.classList.add('fa-solid', 'fa-heart', 'heart-particle');
+                
+                const size = Math.random() * 18 + 10;
+                heart.style.fontSize = `${size}px`;
+                heart.style.left = `${Math.random() * 95}vw`;
+                
+                const duration = Math.random() * 5 + 6;
+                heart.style.animationDuration = `${duration}s`;
+                
+                container.appendChild(heart);
+
+                setTimeout(() => {
+                    heart.remove();
+                }, duration * 1000);
+            }
         }
 
-        setInterval(createHeartParticle, 600);
+        setInterval(createFloatingParticle, 450);
 
         // --- 3. EFECTO CONFETI DE CORAZONES ---
         function triggerConfetti() {
